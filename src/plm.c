@@ -436,8 +436,8 @@ void MSACountMarginals(alignment_t *ali, options_t *options) {
         for (int i = 0; i < nFij; i++) ali->fij[i] = 0.0;
 
         for (int s = 0; s < ali->nSeqs; s++)
-            for (int i = 0; i < ali->nSites - 1; i++)
-                for (int j = i + 1; j < ali->nSites; j++)
+            for (int i = 0; i < 553; i++) # remove intras: need to change to the length(protein_A) (add new parameter: len(protein_A))
+                for (int j = 553; j < ali->nSites; j++) # remove intras
                     if (seq(s, i) > 0) if(seq(s, j) > 0)
                         fij(i, j, seq(s, i) - 1, seq(s, j) - 1)
                             += ali->weights[s];
@@ -458,8 +458,8 @@ void MSACountMarginals(alignment_t *ali, options_t *options) {
                     fi(i, ai) = flatF;
             }
         }
-        for (int i = 0; i < ali->nSites - 1; i++)
-            for (int j = i + 1; j < ali->nSites; j++) {
+        for (int i = 0; i < 553; i++) # remove intras
+            for (int j = 553; j < ali->nSites; j++) { # remove intras
                 double fsum = 0.0;
                 for (int ai = 0; ai < ali->nCodes; ai++)
                     for (int aj = 0; aj < ali->nCodes; aj++)
@@ -497,8 +497,8 @@ void MSACountMarginals(alignment_t *ali, options_t *options) {
         for (int i = 0; i < nFij; i++) ali->fij[i] = 0.0;
 
         for (int s = 0; s < ali->nSeqs; s++)
-            for (int i = 0; i < ali->nSites - 1; i++)
-                for (int j = i + 1; j < ali->nSites; j++)
+            for (int i = 0; i < 553; i++) # remove intras
+                for (int j = 553; j < ali->nSites; j++) # remove intras
                     fij(i, j, seq(s, i), seq(s, j)) += ali->weights[s] * Zinv;
     }
 }
