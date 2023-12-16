@@ -43,7 +43,7 @@ options_t* default_options() {
     options->lambdaH = REGULARIZATION_LAMBDA_H;
     options->lambdaE = REGULARIZATION_LAMBDA_E;
     options->lambdaGroup = REGULARIZATION_LAMBDA_GROUP;
-    options->LenProtein1 = 1; \\ change here to add one parameter
+    options->LenProtein1 = 1; // change here to add one parameter
     options->scale = REWEIGHTING_SCALE;
     options->zeroAPC = 0;
     options->maxIter = 0;
@@ -116,7 +116,7 @@ alignment_t *MSARead(char *alignFile, options_t *options) {
     /* Allocate alignment */
     alignment_t *ali = (alignment_t *) malloc(sizeof(alignment_t));
     ali->nSeqs = ali->nSites = ali->nCodes = 0;
-    ali->Lenp1 = options->LenProtein1; \\ change here to add one parameter
+    ali->Lenp1 = options->LenProtein1; // change here to add one parameter
     ali->alphabet = options->alphabet;
     ali->names = NULL;
     ali->sequences = NULL;
