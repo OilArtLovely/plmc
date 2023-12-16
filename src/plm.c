@@ -43,6 +43,7 @@ options_t* default_options() {
     options->lambdaH = REGULARIZATION_LAMBDA_H;
     options->lambdaE = REGULARIZATION_LAMBDA_E;
     options->lambdaGroup = REGULARIZATION_LAMBDA_GROUP;
+    options->LenProtein1 = 1; \\ change here to add one parameter
     options->scale = REWEIGHTING_SCALE;
     options->zeroAPC = 0;
     options->maxIter = 0;
@@ -115,6 +116,7 @@ alignment_t *MSARead(char *alignFile, options_t *options) {
     /* Allocate alignment */
     alignment_t *ali = (alignment_t *) malloc(sizeof(alignment_t));
     ali->nSeqs = ali->nSites = ali->nCodes = 0;
+    ali->Lenp1 = options->LenProtein1; \\ change here to add one parameter
     ali->alphabet = options->alphabet;
     ali->names = NULL;
     ali->sequences = NULL;
@@ -436,8 +438,8 @@ void MSACountMarginals(alignment_t *ali, options_t *options) {
         for (int i = 0; i < nFij; i++) ali->fij[i] = 0.0;
 
         for (int s = 0; s < ali->nSeqs; s++)
-            for (int i = 0; i < 553; i++) // remove intras: need to change to the length(protein_A) (add new parameter: len(protein_A))
-                for (int j = 553; j < ali->nSites; j++) // remove intras
+            for (int i = 0; i < ali->Lenp1; i++) // remove intras: need to change to the length(protein_A) (add new parameter: len(protein_A))
+                for (int j = ali->Lenp1; j < ali->nSites; j++) // remove intras
                     if (seq(s, i) > 0) if(seq(s, j) > 0)
                         fij(i, j, seq(s, i) - 1, seq(s, j) - 1)
                             += ali->weights[s];
@@ -458,8 +460,8 @@ void MSACountMarginals(alignment_t *ali, options_t *options) {
                     fi(i, ai) = flatF;
             }
         }
-        for (int i = 0; i < 553; i++) // remove intras
-            for (int j = 553; j < ali->nSites; j++) { // remove intras
+        for (int i = 0; i < ali->Lenp1; i++) // remove intras
+            for (int j = ali->Lenp1; j < ali->nSites; j++) { // remove intras
                 double fsum = 0.0;
                 for (int ai = 0; ai < ali->nCodes; ai++)
                     for (int aj = 0; aj < ali->nCodes; aj++)
@@ -497,8 +499,8 @@ void MSACountMarginals(alignment_t *ali, options_t *options) {
         for (int i = 0; i < nFij; i++) ali->fij[i] = 0.0;
 
         for (int s = 0; s < ali->nSeqs; s++)
-            for (int i = 0; i < 553; i++) // remove intras
-                for (int j = 553; j < ali->nSites; j++) // remove intras
+            for (int i = 0; i < ali->Lenp1; i++) // remove intras
+                for (int j = ali->Lenp1; j < ali->nSites; j++) // remove intras
                     fij(i, j, seq(s, i), seq(s, j)) += ali->weights[s] * Zinv;
     }
 }
@@ -683,8 +685,8 @@ void OutputParametersFull(char *outputFile, const numeric_t *x,
             }
 
         /* 17: pairwise marginals fij */
-        for (int i = 0; i < 553; i++) // remove intras
-            for (int j = 553; j < ali->nSites; j++) // remove intras
+        for (int i = 0; i < ali->Lenp1; i++) // remove intras
+            for (int j = ali->Lenp1; j < ali->nSites; j++) // remove intras
                 for (int ai = 0; ai < ali->nCodes; ai++)
                     for (int aj = 0; aj < ali->nCodes; aj++) {
                         OUTPUT_PRECISION f =
@@ -693,8 +695,8 @@ void OutputParametersFull(char *outputFile, const numeric_t *x,
                     }
 
         /* 18: couplings eij */
-        for (int i = 0; i < 553; i++) // remove intras
-            for (int j = 553; j < ali->nSites; j++) // remove intras
+        for (int i = 0; i < ali->Lenp1; i++) // remove intras
+            for (int j = ali->Lenp1; j < ali->nSites; j++) // remove intras
                 for (int ai = 0; ai < ali->nCodes; ai++)
                     for (int aj = 0; aj < ali->nCodes; aj++) {
                         OUTPUT_PRECISION e =
@@ -721,8 +723,8 @@ void OutputCouplingScores(char *couplingsFile, const numeric_t *x,
 
         for (int i = 0; i < ali->nSites * (ali->nSites - 1) / 2;
             i++) couplings[i] = 0;
-        for (int i = 0; i < 553; i++) // remove intras
-            for (int j = 553; j < ali->nSites; j++) { // remove intras
+        for (int i = 0; i < ali->Lenp1; i++) // remove intras
+            for (int j = ali->Lenp1; j < ali->nSites; j++) { // remove intras
                 /* Norm(eij) over ai, aj */
                 numeric_t norm = 0.0;
                 for (int ai = 0; ai < ali->nCodes; ai++)
@@ -743,8 +745,8 @@ void OutputCouplingScores(char *couplingsFile, const numeric_t *x,
             for (int i = 0; i < ali->nSites; i++) {
                 C_pos_avg[i] = 0.0;
             }
-            for (int i = 0; i < 553; i++) { // remove intras
-                for (int j = 553; j < ali->nSites; j++) { //remove intras
+            for (int i = 0; i < ali->Lenp1; i++) { // remove intras
+                for (int j = ali->Lenp1; j < ali->nSites; j++) { //remove intras
                     C_pos_avg[i] +=
                         coupling(i, j) / (numeric_t) (ali->nSites - 1);
                     C_pos_avg[j] +=
@@ -754,8 +756,8 @@ void OutputCouplingScores(char *couplingsFile, const numeric_t *x,
             }
 
             /* Remove the first component */
-            for (int i = 0; i < 553; i++) // remove intras
-                for (int j = 553; j < ali->nSites; j++) // remove intras
+            for (int i = 0; i < ali->Lenp1; i++) // remove intras
+                for (int j = ali->Lenp1; j < ali->nSites; j++) // remove intras
                     coupling(i, j) =
                         coupling(i, j) - C_pos_avg[i] * C_pos_avg[j] / C_avg;    
         }
@@ -763,8 +765,8 @@ void OutputCouplingScores(char *couplingsFile, const numeric_t *x,
         /* Output scores */
         if (ali->target >= 0) {
             /* Focus mode */
-            for (int i = 0; i < 553; i++) // remove intras
-                for (int j = 553; j < ali->nSites; j++) { // remove intras
+            for (int i = 0; i < ali->Lenp1; i++) // remove intras
+                for (int j = ali->Lenp1; j < ali->nSites; j++) { // remove intras
                     char ai = (char) ali->alphabet[seq(ali->target, i)];
                     char aj = (char) ali->alphabet[seq(ali->target, j)];
                     fprintf(fpOutput, "%d %c %d %c 0 %f\n",
@@ -772,8 +774,8 @@ void OutputCouplingScores(char *couplingsFile, const numeric_t *x,
                         coupling(i, j));
                 }
         } else {
-            for (int i = 0; i < 553; i++) // remove intras
-                for (int j = 553; j < ali->nSites; j++)
+            for (int i = 0; i < ali->Lenp1; i++) // remove intras
+                for (int j = ali->Lenp1; j < ali->nSites; j++)
                     fprintf(fpOutput, "%d - %d - 0 %f\n", i + 1, j + 1,
                         coupling(i, j));
         }
