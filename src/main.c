@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
         } else if ((arg < argc-1) && (strcmp(argv[arg], "--lambdag") == 0
                     || strcmp(argv[arg], "-lg") == 0)) {
             options->lambdaGroup = atof(argv[++arg]);
-        } else if ((arg < argc-1) && (strcmp(argv[arg], "--lenprotein1") == 0 \\ change here, add one more parameter
+        } else if ((arg < argc-1) && (strcmp(argv[arg], "--lenprotein1") == 0 // change here, add one more parameter
                     || strcmp(argv[arg], "-Lp1") == 0)) {
             options->LenProtein1 = atof(argv[++arg]);
         } else if ((arg < argc-1) && (strcmp(argv[arg], "--theta") == 0
