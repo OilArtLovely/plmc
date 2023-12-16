@@ -41,6 +41,7 @@ const char *usage =
 "\n"
 "    Options, general:\n"
 "          --fast                       Fast weights and stochastic gradient descent\n"
+"      -Lp1 --lenprotein1    <value>         Length of protein 1\n"
 "      -a  --alphabet   alphabet        Alternative character set to use for analysis\n"
 "      -f  --focus      identifier      Select only uppercase, non-gapped sites from a focus sequence\n"
 "      -g  --gapignore                  Model sequence likelihoods only by coding, non-gapped portions\n"
@@ -82,6 +83,9 @@ int main(int argc, char **argv) {
         } else if ((arg < argc-1) && (strcmp(argv[arg], "--lambdag") == 0
                     || strcmp(argv[arg], "-lg") == 0)) {
             options->lambdaGroup = atof(argv[++arg]);
+        } else if ((arg < argc-1) && (strcmp(argv[arg], "--lenprotein1") == 0 \\ change here, add one more parameter
+                    || strcmp(argv[arg], "-Lp1") == 0)) {
+            options->LenProtein1 = atof(argv[++arg]);
         } else if ((arg < argc-1) && (strcmp(argv[arg], "--theta") == 0
                     || strcmp(argv[arg], "-t") == 0)) {
             options->theta = atof(argv[++arg]);
