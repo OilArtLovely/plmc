@@ -74,8 +74,8 @@ numeric_t *InferPairModel(alignment_t *ali, options_t *options) {
     (numeric_t *) malloc((ali->nSites + ali->nSites * (ali->nSites - 1) / 2)
             * sizeof(numeric_t));
     for (int i = 0; i < ali->nSites; i++) lambdaHi(i) = options->lambdaH;
-    for (int i = 0; i < 553; i++) // remove intras
-        for (int j = 553; j < ali->nSites; j++) // remove intras
+    for (int i = 0; i < ali->Lenp1; i++) // remove intras
+        for (int j = ali->Lenp1; j < ali->nSites; j++) // remove intras
             lambdaEij(i, j) = options->lambdaE;
 
     /* For gap-reduced problems, eliminate the gaps and reduce the alphabet */
@@ -181,8 +181,8 @@ void EstimatePairModelMAP(numeric_t *x, numeric_t *lambdas, alignment_t *ali,
         numeric_t scale = (numeric_t) options->sgdBatchSize / ali->nEff;
         options->lambdaGroup *= scale;
         for (int i = 0; i < ali->nSites; i++) lambdaHi(i) *= scale;
-        for (int i = 0; i < 553; i++) // remove intras
-            for (int j = 553; j < ali->nSites; j++) // remove intras
+        for (int i = 0; i < ali->Lenp1; i++) // remove intras
+            for (int j = ali->Lenp1; j < ali->nSites; j++) // remove intras
                 lambdaEij(i, j) *= scale;
 
         /* SGD optimization */
@@ -194,8 +194,8 @@ void EstimatePairModelMAP(numeric_t *x, numeric_t *lambdas, alignment_t *ali,
         numeric_t invScale = ali->nEff / (numeric_t) options->sgdBatchSize;
         options->lambdaGroup *= invScale;
         for (int i = 0; i < ali->nSites; i++) lambdaHi(i) *= invScale;
-        for (int i = 0; i < 553; i++) // remove intras
-            for (int j = 553; j < ali->nSites; j++) // remove intras
+        for (int i = 0; i < ali->Lenp1; i++) // remove intras
+            for (int j = ali->Lenp1; j < ali->nSites; j++) // remove intras
                 lambdaEij(i, j) *= invScale;
     } else {
         /* L-BFGS optimization */
@@ -212,8 +212,8 @@ void EstimatePairModelMAP(numeric_t *x, numeric_t *lambdas, alignment_t *ali,
         ZeroAPCPriors(ali, options, lambdas, x);
 
         /* Reinitialize coupling parameters */
-        for (int i = 0; i < 553; i++) // remove intras
-            for (int j = 553; j < ali->nSites; j++) // remove intras
+        for (int i = 0; i < ali->Lenp1; i++) // remove intras
+            for (int j = ali->Lenp1; j < ali->nSites; j++) // remove intras
                 for (int ai = 0; ai < ali->nCodes; ai++)
                     for (int aj = 0; aj < ali->nCodes; aj++)
                         xEij(i, j, ai, aj) = 0.0;
@@ -497,8 +497,8 @@ static lbfgsfloatval_t PLMNegLogPosterior(void *instance,
             fx += lambdaHi(i) * xHi(i, ai) * xHi(i, ai);
         }
 
-    for (int i = 0; i < 553; i++) // remove intras
-        for (int j = 553; j < ali->nSites; j++) // remove intras
+    for (int i = 0; i < ali->Lenp1; i++) // remove intras
+        for (int j = ali->Lenp1; j < ali->nSites; j++) // remove intras
             for (int ai = 0; ai < ali->nCodes; ai++)
                 for (int aj = 0; aj < ali->nCodes; aj++) {
                     dEij(i, j, ai, aj) += lambdaEij(i, j)
@@ -635,8 +635,8 @@ static lbfgsfloatval_t PLMNegLogPosteriorGapReduce(void *instance,
             fx += lambdaHi(i) * xHi(i, ai) * xHi(i, ai);
         }
 
-    for (int i = 0; i < 553; i++) // remove intras
-        for (int j = 553; j < ali->nSites; j++) // remove intras
+    for (int i = 0; i < ali->Lenp1; i++) // remove intras
+        for (int j = ali->Lenp1; j < ali->nSites; j++) // remove intras
             for (int ai = 0; ai < ali->nCodes; ai++)
                 for (int aj = 0; aj < ali->nCodes; aj++) {
                     dEij(i, j, ai, aj) += lambdaEij(i, j)
@@ -682,8 +682,8 @@ static lbfgsfloatval_t PLMNegLogPosteriorBlock(void *instance,
         i++) eij[i] = 0.0;
     for (int i = 0; i < ali->nSites * ali->nSites * ali->nCodes * ali->nCodes;
         i++) gEij[i] = 0.0;
-    for (int i = 0; i < 553; i++) // remove intras
-        for (int j = 553; j < ali->nSites; j++) // remove intras
+    for (int i = 0; i < ali->Lenp1; i++) // remove intras
+        for (int j = ali->Lenp1; j < ali->nSites; j++) // remove intras
             for (int ai = 0; ai < ali->nCodes; ai++)
                 for (int aj = 0; aj < ali->nCodes; aj++)
                     Eij(j, aj, i, ai) = Eij(i, ai, j, aj) = xEij(i, j, ai, aj);
@@ -727,8 +727,8 @@ static lbfgsfloatval_t PLMNegLogPosteriorBlock(void *instance,
             gHi(i, seq(s, i)) -= ali->weights[s];
         for(int jx = 0; jx < ali->nSites * ali->nCodes; jx++) gHi[jx] -= H[jx];
 
-        for (int i = 0; i < 553; i++) // remove intras
-            for (int j = 553; j < ali->nSites; j++) // remove intras
+        for (int i = 0; i < ali->Lenp1; i++) // remove intras
+            for (int j = ali->Lenp1; j < ali->nSites; j++) // remove intras
                 gEij(i, seq(s, i), j, seq(s, j)) -= ali->weights[s];
 
         for (int i = 0; i < ali->nSites; i++) {
@@ -747,8 +747,8 @@ static lbfgsfloatval_t PLMNegLogPosteriorBlock(void *instance,
         for (int ai = 0; ai < ali->nCodes; ai++)
             dHi(i, ai) += gHi(i, ai);
 
-    for (int i = 0; i < 553; i++) // remove intras
-        for (int j = 553; j < ali->nSites; j++) // remove intras
+    for (int i = 0; i < ali->Lenp1; i++) // remove intras
+        for (int j = ali->Lenp1; j < ali->nSites; j++) // remove intras
             for (int ai = 0; ai < ali->nCodes; ai++)
                 for (int aj = 0; aj < ali->nCodes; aj++)
                     dEij(i, j, ai, aj) += gEij(j, aj, i, ai) + gEij(i, ai, j, aj);
@@ -766,8 +766,8 @@ static lbfgsfloatval_t PLMNegLogPosteriorBlock(void *instance,
             fx += lambdaHi(i) * xHi(i, ai) * xHi(i, ai);
         }
 
-    for (int i = 0; i < 553; i++) // remove intras
-        for (int j = 553; j < ali->nSites; j++) // remove intras
+    for (int i = 0; i < ali->Lenp1; i++) // remove intras
+        for (int j = ali->Lenp1; j < ali->nSites; j++) // remove intras
             for (int ai = 0; ai < ali->nCodes; ai++)
                 for (int aj = 0; aj < ali->nCodes; aj++) {
                     dEij(i, j, ai, aj) += lambdaEij(i, j)
@@ -862,8 +862,8 @@ static lbfgsfloatval_t PLMNegLogPosteriorDO(void *instance,
             fx += lambdaHi(i) * xHi(i, ai) * xHi(i, ai);
         }
 
-    for (int i = 0; i < 553; i++) // remove intras
-        for (int j = 553; j < ali->nSites; j++) // remove intras
+    for (int i = 0; i < ali->Lenp1; i++) // remove intras
+        for (int j = ali->Lenp1; j < ali->nSites; j++) // remove intras
             for (int ai = 0; ai < ali->nCodes; ai++)
                 for (int aj = 0; aj < ali->nCodes; aj++) {
                     dEij(i, j, ai, aj) += lambdaEij(i, j)
@@ -934,8 +934,8 @@ lbfgsfloatval_t PostCondition(const lbfgsfloatval_t *x, lbfgsfloatval_t *g, lbfg
 
     /* Group (L1/L2) regularization  */
     if (options->lambdaGroup > 0)
-        for (int i = 0; i < 553; i++) // remove intras
-            for (int j = 553; j < ali->nSites; j++) { // remove intras
+        for (int i = 0; i < ali->Lenp1; i++) // remove intras
+            for (int j = ali->Lenp1; j < ali->nSites; j++) { // remove intras
                 double l2 = REGULARIZATION_GROUP_EPS;
                 for (int ai = 0; ai < ali->nCodes; ai++)
                     for (int aj = 0; aj < ali->nCodes; aj++)
@@ -953,8 +953,8 @@ lbfgsfloatval_t PostCondition(const lbfgsfloatval_t *x, lbfgsfloatval_t *g, lbfg
 void ZeroAPCPriors(alignment_t *ali, options_t *options, numeric_t *lambdas,
     lbfgsfloatval_t *x) {
     /* Compute the variances of the couplings for each pair */
-    for (int i = 0; i < 553; i++) // remove intras
-        for (int j = 553; j < ali->nSites; j++) { // remove intras
+    for (int i = 0; i < ali->Lenp1; i++) // remove intras
+        for (int j = ali->Lenp1; j < ali->nSites; j++) { // remove intras
             /* Mean(eij) over ai, aj */
             numeric_t mean = 0.0;
             for (int ai = 0; ai < ali->nCodes; ai++)
@@ -980,8 +980,8 @@ void ZeroAPCPriors(alignment_t *ali, options_t *options, numeric_t *lambdas,
     for (int i = 0; i < ali->nSites; i++) {
         V_pos_avg[i] = 0.0;
     }
-    for (int i = 0; i < 553; i++) { // remove intras
-        for (int j = 553; j < ali->nSites; j++) { // remove intras
+    for (int i = 0; i < ali->Lenp1; i++) { // remove intras
+        for (int j = ali->Lenp1; j < ali->nSites; j++) { // remove intras
             V_pos_avg[i] += lambdaEij(i, j) / (numeric_t) (ali->nSites - 1);
             V_pos_avg[j] += lambdaEij(i, j) / (numeric_t) (ali->nSites - 1);
             V_avg += lambdaEij(i, j) / nPairs;
@@ -989,8 +989,8 @@ void ZeroAPCPriors(alignment_t *ali, options_t *options, numeric_t *lambdas,
     }
 
     /* Remove the first component of the variances */
-    for (int i = 0; i < 553; i++) // remove intras
-        for (int j = 553; j < ali->nSites; j++) // remove intras
+    for (int i = 0; i < ali->Lenp1; i++) // remove intras
+        for (int j = ali->Lenp1; j < ali->nSites; j++) // remove intras
             lambdaEij(i, j) =
                 lambdaEij(i, j) - V_pos_avg[i] * V_pos_avg[j] / V_avg;
 
@@ -1000,8 +1000,8 @@ void ZeroAPCPriors(alignment_t *ali, options_t *options, numeric_t *lambdas,
     numeric_t inbounds = 0;
     numeric_t min = LAMBDA_J_MAX;
     numeric_t max = LAMBDA_J_MIN;
-    for (int i = 0; i < 553; i++) { // remove intras
-        for (int j = 553; j < ali->nSites; j++) { // remove intras
+    for (int i = 0; i < ali->Lenp1; i++) { // remove intras
+        for (int j = ali->Lenp1; j < ali->nSites; j++) { // remove intras
             /* Lambda coefficients are 1/2 the inverse variance */
             if (lambdaEij(i, j) > 0) {
                 lambdaEij(i, j) = 1.0 / (2.0 * lambdaEij(i, j));
