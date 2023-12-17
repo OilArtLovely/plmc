@@ -63,6 +63,7 @@ typedef struct {
     int fastWeights;
     numeric_t theta;
     numeric_t scale;
+    int LenProtein1; // add new parameter here
 
     /* Regularization */
     numeric_t lambdaH;
