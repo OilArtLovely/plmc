@@ -84,6 +84,7 @@ typedef struct {
     int nSeqs;
     int nSites;
     int nCodes;
+    int Lenp1; // change here to add one new parameter
     char *alphabet;
     char **names;
     letter_t *sequences;
